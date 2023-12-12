@@ -1,4 +1,4 @@
-# Test task: Doctors hours
+# Test task: Doctors' hours
 
 ## description
 
@@ -19,4 +19,4 @@ Requirement: form a list of open 30min windows
 
 1. The implementation can be found in `test_task/solution.py`.
 2. There are number of tests in `tests/test_solution.py`. One of those tests uses the schedule found above.
-3. The code has no external dependencies. Only the python standard library is used. One can run them with `python run_tests.py`
+3. The code has no external dependencies. Only the python standard library is used. One can run the tests with `python run_tests.py`
