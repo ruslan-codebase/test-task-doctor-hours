@@ -4,23 +4,34 @@ def into_minutes(hh_mm_time):
     return hh_mm[0]*60 + hh_mm[1]
 
 
-def free_time(start_min, stop_min, busy_min):
-    blocks = []
-    start = start_min
+def into_hh_mm(min_time):
+    hours, minutes = min_time//60, min_time%60
+    return f"{hours:02d}:{minutes:02d}"
 
+
+def free_time(start_min, stop_min, busy_min):
+    start = start_min
+    
     for pause in busy_min:
-        blocks.append(pause['start']-start)
+        yield {"start": start, "stop": pause["start"]}
         start = pause['stop']
     
-    blocks.append(stop_min-start)
-    return blocks
+    yield {"start": start, "stop": stop_min}
 
 
-def number_of_chunks(busy, start="09:00", stop="21:00", chunk_size=30):
-    start_min, stop_min = into_minutes(start), into_minutes(stop)
+def list_of_open_windows(busy, start="09:00", stop="21:00", window_size=30):
     busy_min = sorted(
         [{'start': into_minutes(i['start']), 'stop': into_minutes(i['stop'])} for i in busy],
         key=lambda x: x['start'])
-    free_time_blocks = free_time(start_min, stop_min, busy_min)
 
-    return sum([i//chunk_size for i in free_time_blocks])
+    result = []
+    for block in free_time(into_minutes(start), into_minutes(stop), busy_min):
+        current = block["start"]
+        nxt = current+window_size
+
+        while nxt <= block["stop"]:
+            result.append({"start": into_hh_mm(current), "stop": into_hh_mm(nxt)})
+            current = nxt
+            nxt = current+window_size
+    
+    return result
